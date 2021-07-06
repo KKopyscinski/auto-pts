@@ -32,6 +32,7 @@ except ImportError:  # running this module as script
 from pybtp import btp
 from pybtp.types import Addr, Prop, Perm
 from . import gatt
+from autoptsclient_common import get_unique_name
 from ptsprojects.stack import get_stack
 from ptsprojects.zephyr.dis_wid import dis_wid_hdl
 
@@ -66,6 +67,14 @@ class DIS_DB:
 dis_pnp_char_val = '0100E5FE110011'
 
 
+iut_manufacturer_data = 'ABCD'
+iut_appearance = '1111'
+iut_svc_data = '1111'
+iut_flags = '11'
+iut_svcs = '1111'
+iut_attr_db_off = 0x000b
+
+
 def set_pixits(pts):
     """Setup DIS profile PIXITS for workspace. Those values are used for test
     case if not updated within test case.
@@ -75,6 +84,8 @@ def set_pixits(pts):
 
     pts -- Instance of PyPTS"""
 
+    global iut_device_name
+    iut_device_name = get_unique_name(pts)
 
     pts.set_pixit("DIS", "TSPX_bd_addr_iut", "DEADBEEFDEAD")
     pts.set_pixit("DIS", "TSPX_iut_device_name_in_adv_packet_for_random_address", iut_device_name)
@@ -111,15 +122,6 @@ init_server = [TestFunc(btp.core_reg_svc_gatt),
                         gatt.Perm.read, DIS_DB.CHR_PnP_ID),
                TestFunc(btp.gatts_set_val, 0, dis_pnp_char_val),
                TestFunc(btp.gatts_start_server)]
-
-
-iut_device_name = 'Tester'.encode('utf-8')
-iut_manufacturer_data = 'ABCD'
-iut_appearance = '1111'
-iut_svc_data = '1111'
-iut_flags = '11'
-iut_svcs = '1111'
-iut_attr_db_off = 0x000b
 
 
 def test_cases(ptses):

@@ -33,6 +33,7 @@ from pybtp import btp
 from pybtp.types import Addr, IOCap, AdType, AdFlags, Prop, Perm
 import binascii
 from . import gatt
+from autoptsclient_common import get_unique_name
 from ptsprojects.stack import get_stack
 from .gap_wid import gap_wid_hdl, hdl_wid_161, gap_wid_hdl_failed_read, gap_wid_hdl_mode1_lvl2
 
@@ -72,7 +73,6 @@ init_gatt_db = [TestFunc(btp.core_reg_svc_gatt),
                 TestFunc(btp.gatts_start_server)]
 
 
-iut_device_name = 'Tester'.encode('utf-8')
 iut_manufacturer_data = 'ABCD'.encode('utf-8')
 iut_ad_uri = '000168747470733A2F2F7777772E626C7565746F'
 iut_appearance = '1111'
@@ -80,20 +80,6 @@ iut_svc_data = '1111'
 iut_flags = '11'
 iut_svcs = '1111'
 
-
-class AdData:
-    ad_manuf = (AdType.manufacturer_data, 'ABCD')
-    ad_name_sh = (AdType.name_short, bytes.hex(iut_device_name))
-    ad_tx_pwr = (AdType.tx_power, '00')
-    ad_uri = (AdType.uri, iut_ad_uri)
-
-
-# Advertising data
-ad = [(AdType.uuid16_some, '1111'),
-      (AdType.gap_appearance, '1111'),
-      (AdType.name_short, bytes.hex('Tester'.encode('utf-8'))),
-      (AdType.manufacturer_data, '11111111'),
-      (AdType.uuid16_svc_data, '111111')]
 
 def set_pixits(pts):
     """Setup GAP profile PIXITS for workspace. Those values are used for test
@@ -104,12 +90,15 @@ def set_pixits(pts):
 
     pts -- Instance of PyPTS"""
 
+    global iut_device_name
+    iut_device_name = get_unique_name(pts)
+
     ad_str_flags = str(AdType.flags).zfill(2) + \
                    str(AdFlags.br_edr_not_supp).zfill(2)
     ad_str_flags_len = str(len(ad_str_flags) // 2).zfill(2)
     ad_str_name_short = str(AdType.name_short).zfill(2) + \
                         bytes.hex(iut_device_name)
-    ad_str_name_short_len = str(len(ad_str_name_short) // 2).zfill(2)
+    ad_str_name_short_len = format((len(ad_str_name_short) // 2), 'x').zfill(2)
     ad_pixit = ad_str_flags_len + ad_str_flags + ad_str_name_short_len + \
                ad_str_name_short
 

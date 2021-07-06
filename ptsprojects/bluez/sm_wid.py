@@ -81,7 +81,7 @@ def hdl_wid_111(desc):
 
 def hdl_wid_115(desc):
     btp.gap_set_conn()
-    btp.gap_adv_ind_on()
+    btp.gap_adv_ind_on(ad=stack.gap.ad)
     return True
 
 

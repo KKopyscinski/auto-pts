@@ -919,8 +919,9 @@ def hdl_wid_1002(desc):
 
 
 def hdl_wid_20001(desc):
+    stack = btp.get_stack()
     btp.gap_set_conn()
-    btp.gap_adv_ind_on()
+    btp.gap_adv_ind_on(ad=stack.gap.ad)
     return True
 
 def hdl_wid_20115(desc):

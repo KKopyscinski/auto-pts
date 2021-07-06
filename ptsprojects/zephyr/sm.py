@@ -30,6 +30,7 @@ except ImportError:  # running this module as script
 
 from pybtp import btp
 from pybtp.types import Addr, IOCap
+from autoptsclient_common import get_unique_name
 from ptsprojects.stack import get_stack
 from .sm_wid import sm_wid_hdl
 
@@ -60,7 +61,8 @@ def test_cases(pts):
     pts -- Instance of PyPTS"""
 
     pts_bd_addr = pts.q_bd_addr
-    iut_device_name = 'Tester'
+
+    iut_device_name = get_unique_name(pts)
 
     stack = get_stack()
     stack.gap_init(name=iut_device_name)

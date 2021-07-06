@@ -31,6 +31,7 @@ except ImportError:  # running this module as script
 from pybtp import btp
 from pybtp.types import Addr
 from ptsprojects.stack import get_stack, L2cap
+from autoptsclient_common import get_unique_name
 from wid import l2cap_wid_hdl
 
 
@@ -51,6 +52,9 @@ def set_pixits(pts):
     PTS.
 
     pts -- Instance of PyPTS"""
+
+    global iut_device_name
+    iut_device_name = get_unique_name(pts)
 
     pts.set_pixit("L2CAP", "TSPX_bd_addr_iut", "DEADBEEFDEAD")
     pts.set_pixit("L2CAP", "TSPX_bd_addr_iut_le", "DEADBEEFDEAD")
@@ -117,7 +121,7 @@ def test_cases(pts):
 
     stack = get_stack()
 
-    stack.gap_init()
+    stack.gap_init(iut_device_name)
 
     common = [TestFunc(btp.core_reg_svc_gap),
                       TestFunc(btp.core_reg_svc_l2cap),
